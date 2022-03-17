@@ -56,12 +56,13 @@ Authorization on API low-priority or not needed.
 1. ☑ Create main page
     - When opening index.html in a web browser, the main page of the application should be displayed.
     - Main page should be titled "TODO".
-1. ☐ Main page should display all task lists
+1. ☑ Main page should display all task lists
     - Page should request collection of task lists from API.
     - Task lists should each display their name, completed task count, and total task count.
-1. ☐ TaskList component
-1. ☐ Task component
+1. ☑ TaskList component
+1. ☑ Task component
 1. ☐ Styling
+1. ☐ Unit tests & refactor
 1. ☒ Request/Response logging middleware
 1. ☒ Authorization middleware
     - Could use basic auth to keep things simple.

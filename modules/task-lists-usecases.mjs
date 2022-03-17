@@ -89,7 +89,7 @@ class TaskListsUseCases {
                     method: 'GET',
                     href: linkFactory.createHref('self', tl.id)
                 });
-                if (taskList.taskCount > taskList.completedTaskCount)
+                if (taskList.taskCount == 0 || taskList.taskCount > taskList.completedTaskCount)
                     taskList._links.push({
                         title: 'Delete',
                         rel: 'self',

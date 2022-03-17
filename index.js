@@ -1,9 +1,11 @@
 import express, { json as parseJsonRequests, urlencoded as parseUrlEncodedRequests } from 'express';
+import cors from 'cors';
 import env from 'process';
 import { tasksRepository, taskListsRepository } from './modules/tasks-store.mjs';
 import { TasksUseCases } from './modules/tasks-usecases.mjs';
 import { TaskListsUseCases } from './modules/task-lists-usecases.mjs';
 import { LinkFactory } from './modules/http-utilities.mjs';
+import { Console } from 'console';
 
 const PORT = env.PORT ?? 3000;
 const app = express();
@@ -11,6 +13,10 @@ const tasksUseCases = new TasksUseCases(tasksRepository);
 const taskListsUseCases = new TaskListsUseCases(tasksRepository, taskListsRepository);
 
 //Middleware
+
+  //Enable all CORS requests
+app.use(cors());
+
   //Parse JSON request bodies.
 app.use(parseJsonRequests());
 
@@ -56,7 +62,7 @@ app.delete('/TaskLists/:id', (request, response) => {
 
 app.get('/TaskLists/:id', (request, response) => {
   let linkFactory = new LinkFactory(`${request.protocol}://${request.hostname}:${PORT}`, {
-    'create-form': () => '/Tasks/New',
+    'create-form': (id) => `/Tasklists/${id}/New`,
     'edit-form': (id) => `/Tasks/${id}`,
     'self': (id) => `/Tasks/${id}`
   });

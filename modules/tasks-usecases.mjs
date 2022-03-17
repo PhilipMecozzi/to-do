@@ -13,12 +13,13 @@ class TasksUseCases {
         return this.#tasksRepository.deleteTask(id);
     }
 
-    getNewTaskRepresentation(id) {
+    getNewTaskRepresentation(linkFactory, id) {
         return {
             _links: [{
                 title: 'Submit',
                 rel: 'collection',
-                method: 'POST'
+                method: 'POST',
+                href: linkFactory.createHref('collection', id)
             }],
             taskListId: id,
             description: '',
@@ -27,13 +28,14 @@ class TasksUseCases {
         };
     }
 
-    getTask(id) {
+    getTask(linkFactory, id) {
         let task = this.#tasksRepository.readTaskById(id);
         if (task === null) return null;
         let _links = [{
             title: 'Submit',
             rel: 'self',
-            method: 'PUT'
+            method: 'PUT',
+            href: linkFactory.createHref('self', id)
         }];
         return { _links, ...task };
     }

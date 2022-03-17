@@ -14,25 +14,27 @@ class TaskListsUseCases {
         return this.#taskListsRepository.deleteTaskList(id);
     }
 
-    getNewTaskListRepresentation() {
+    getNewTaskListRepresentation(linkFactory) {
         return {
             _links: [{
                 title: 'Submit',
                 rel: 'collection',
-                method: 'POST'
+                method: 'POST',
+                href: linkFactory.createHref('collection')
             }],
             name: ''
         };
     }
 
-    getTaskList(id) {
+    getTaskList(linkFactory, id) {
         let taskList = this.#taskListsRepository.readTaskListById(id);
         if (taskList === null) return null;
         return {
             _links: [{
                 title: 'Add Task',
                 rel: 'create-form',
-                method: 'GET'
+                method: 'GET',
+                href: linkFactory.createHref('create-form', id)
             }],
             ...taskList,
             tasks: this.#tasksRepository.readTasksByTaskList(id).map(t => {
@@ -48,13 +50,15 @@ class TaskListsUseCases {
                 task._links.push({
                     title: 'Delete',
                     rel: 'self',
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    href: linkFactory.createHref('self', t.id)
                 });
                 if (task.status != 'complete')
                     task._links.push({
                         title: 'Edit',
                         rel: 'edit-form',
-                        method: 'GET'
+                        method: 'GET',
+                        href: linkFactory.createHref('edit-form', t.id)
                     });
 
                 return task;
@@ -62,33 +66,35 @@ class TaskListsUseCases {
         };
     }
 
-    getTaskLists() {
+    getTaskLists(linkFactory) {
         return {
             _links: [{
                 title: 'Add List',
                 rel: 'create-form',
-                method: 'GET'
+                method: 'GET',
+                href: linkFactory.createHref('create-form')
             }],
             lists:
                 this.#taskListsRepository.readTaskLists().map(tl => {
                 let taskList = {
-                    _links: [],
-                    id: tl.id
+                    _links: []
                 };
-                let tasks = this.#tasksRepository.readTasksByTaskList(taskList.id);
+                let tasks = this.#tasksRepository.readTasksByTaskList(tl.id);
                 taskList.taskCount = tasks.length;
                 taskList.completedTaskCount = tasks.filter(t => t.status == 'complete').length;
                 
                 taskList._links.push({
                     title: tl.name,
                     rel: 'self',
-                    method: 'GET'
+                    method: 'GET',
+                    href: linkFactory.createHref('self', tl.id)
                 });
                 if (taskList.taskCount > taskList.completedTaskCount)
                     taskList._links.push({
                         title: 'Delete',
                         rel: 'self',
-                        method: 'DELETE'
+                        method: 'DELETE',
+                        href: linkFactory.createHref('self', tl.id)
                     });
                 
                 return taskList;
